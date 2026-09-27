@@ -1,0 +1,29 @@
+# docker-compose.yml
+# Para uso local: clone o repositório pokedex-battle-api como pasta irmã
+# desta (../pokedex-battle-api) antes de rodar `docker compose up --build`.
+version: "3.9"
+
+services:
+  api-secundaria:
+    build: ../pokedex-battle-api
+    container_name: pokedex-api-secundaria
+    ports:
+      - "8001:8001"
+    volumes:
+      - secundaria_data:/app/data
+
+  api-principal:
+    build: .
+    container_name: pokedex-api-principal
+    ports:
+      - "8000:8000"
+    environment:
+      - API_SECUNDARIA_URL=http://api-secundaria:8001
+    depends_on:
+      - api-secundaria
+    volumes:
+      - principal_data:/app/data
+
+volumes:
+  principal_data:
+  secundaria_data:
